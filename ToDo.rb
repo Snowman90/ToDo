@@ -1,4 +1,6 @@
 STDOUT.sync = true
+require 'ostruct'
+require "time"
 
 class ToDo
 
@@ -18,8 +20,8 @@ class ToDo
 	private
 
 	def print_hello
-		puts 'Witaj, co chcesz zrobic?'
-		puts 'Mozliwe akcje to: quit/add/show/update/delete/show all'
+		puts 'Co chcesz zrobic?'
+		puts 'Mozliwe akcje to: quit/add/show/update/delete/finished/show all'
 	end
 
 	def parse_action
@@ -45,6 +47,8 @@ class ToDo
 
 		when 'show all'
 			print_list
+		when 'finished'
+			finished
 		else
 			puts 'Nie wiem co mam zrobic'
 		end
@@ -54,7 +58,7 @@ class ToDo
 	def add
 		puts 'Jakie zadanie chcesz dodac?'
 		new_task = gets.chomp
-		@tasks << new_task
+		@tasks << Task.new(new_task,"✕")
 		puts "Zadanie - #{new_task} zostało dodane!"
 		puts
 	end
@@ -66,7 +70,7 @@ class ToDo
 		if @tasks[task_id] == nil
 			puts 'Nie ma takiego elementu na liście'
 		else
-			puts @tasks[task_id]
+			puts @tasks[task_id].title + " " + @tasks[task_id].status
 		end
 		puts
 	end
@@ -79,7 +83,28 @@ class ToDo
 		else
 			puts 'Podaj nową nazwę zadania'
 			new_task = gets.chomp
-			@tasks[task_id] = new_task
+			@tasks[task_id].title = new_task
+		end
+		puts
+	end
+
+	def finished
+		puts 'Które zadanie chcesz zaktualizować?'
+		task_id = gets.chomp.to_i
+		if @tasks[task_id] == nil
+			puts 'Nie ma takiego elementu na liście'
+		else
+			puts 'Czy zadanie zostało już wykonane?(T/N)'
+			answer = gets.chomp
+			case answer.upcase
+			when 'T'
+				@tasks[task_id].status = "✔"
+				puts "Gratulacje zadanie #{@tasks[task_id].title} zostalo zakonczone"
+			when 'N'
+				@tasks[task_id].status = "✕"
+			else
+				puts 'Nie moge tego zrobic, status zadania pozostaje nie zmieniony'
+			end
 		end
 		puts
 	end
@@ -91,7 +116,7 @@ class ToDo
 			puts 'Nie ma takiego elementu na liście'
 		else
 			task = @tasks.delete_at(task_id)
-			puts "Zadanie - #{task} usunięte!"
+			puts "Zadanie - #{task.title} zostało usunięte!"
 			puts
 		end
 	end
@@ -99,7 +124,10 @@ class ToDo
 
 	def print_list
 		puts '----------'
-    	puts @tasks.join("\n")
+    	#puts @tasks.join("\n")
+    	@tasks.each{|x| print x.title
+    		print " "
+    		print x.status, "\n"}
     	puts '----------'
 
 	end
@@ -111,4 +139,33 @@ class ToDo
 
 end
 
+class Task
+
+	attr_accessor :title
+	attr_accessor :status
+	def initialize(title, status)
+		@title = title
+		@status = status
+	end
+
+
+
+end
+
+
+class Event
+	attr_accessor :title
+	attr_accessor :status
+	attr_accessor :date
+	def initialize(title, status, date)
+		@title = title
+		@status = status
+		@date = date
+	end
+end
+
+
+
 ToDo.new.run
+
+
