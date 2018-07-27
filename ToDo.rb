@@ -21,7 +21,7 @@ class ToDo
 
 	def print_hello
 		puts 'Co chcesz zrobic?'
-		puts 'Mozliwe akcje to: quit/add/show/update/delete/finished/show all'
+		puts 'Mozliwe akcje to: quit/add/show/update/delete/finished/search/show all'
 	end
 
 	def parse_action
@@ -49,6 +49,8 @@ class ToDo
 			print_list
 		when 'finished'
 			finished
+		when 'search'
+			search
 		else
 			puts 'Nie wiem co mam zrobic'
 		end
@@ -121,6 +123,21 @@ class ToDo
 		end
 	end
 
+	def search
+		puts 'Podaj tytuł szukanego zadania'
+		task_title = gets.chomp
+		flag = 0
+		@tasks.each{|x| if  x.title == task_title
+							puts 'Szukane zadanie:'
+							puts x.title + " " + x.status
+							flag = 1
+
+						end}
+		if flag == 0
+			puts 'Nie znaleziono elementu o tym tytule'
+		end
+
+	end
 
 	def print_list
 		puts '----------'
@@ -134,6 +151,7 @@ class ToDo
 
 	def print_spacer
 		puts '==========='
+		puts
 	end
 
 
